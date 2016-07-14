@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# gdpipe --- Write text to the default FIFO file of Guile-Daemon
+
+# Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+
+# This file is part of Guile-Daemon.
+
+# Guile-Daemon is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Guile-Daemon is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+if [ -z "$XDG_CONFIG_HOME" ]; then
+    CONF_DIR="$HOME/.config"
+else
+    CONF_DIR="$XDG_CONFIG_HOME"
+fi
+
+FIFO_FILE="$CONF_DIR/guile-daemon/run/fifo"
+
+case "$1" in
+    -h | --help)
+        echo "Usage: gdpipe COMMANDS ...
+Redirect COMMANDS to '$FIFO_FILE'."
+        exit 0 ;;
+    *)
+        echo "$@" >> "$FIFO_FILE" ;;
+esac
+
+# gdpipe ends here

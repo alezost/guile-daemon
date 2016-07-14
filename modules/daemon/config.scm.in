@@ -1,0 +1,43 @@
+;;; config.scm --- Configuration module for Guile-Daemon
+
+;; Copyright © 2016 Alex Kost <alezost@gmail.com>
+
+;; This file is part of Guile-Daemon.
+
+;; Guile-Daemon is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; Guile-Daemon is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This module provides compile-time configuration variables for
+;; guile-daemon.
+
+;;; Code:
+
+(define-module (daemon config)
+  #:export (%version
+            %package-name
+            %package-url
+            %copyright-year
+            %bug-address))
+
+(define %version
+  "@PACKAGE_VERSION@")
+
+(define %package-name
+  "@PACKAGE_NAME@")
+
+(define %copyright-year
+  "@COPYRIGHT_YEAR@")
+
+;;; config.scm ends here

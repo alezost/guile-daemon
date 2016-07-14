@@ -1,0 +1,69 @@
+#!@GUILE@
+-*- scheme -*-
+!#
+;;; guile-daemon
+
+;; Copyright © 2016 Alex Kost <alezost@gmail.com>
+
+;; This file is part of Guile-Daemon.
+
+;; Guile-Daemon is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; Guile-Daemon is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This script runs 'main' procedure from (daemon) module.
+
+;;; Code:
+
+(use-modules (ice-9 regex))
+
+(define-syntax-rule (push! elt lst)
+  (set! lst (cons elt lst)))
+
+;; This code of 'config-lookup' (modified a bit) is taken from
+;; <http://git.savannah.gnu.org/cgit/guix.git/tree/scripts/guix.in>.
+(define (config-lookup variable)
+  "Return the value of the compile-time VARIABLE.
+Finding such values is not trivial, as they may be recursive.  For
+example, default value of 'libdir' is '${exec_prefix}/lib', so we need
+to find out the value of 'exec_prefix' at first, etc."
+  (define config
+    '(("prefix"         . "@prefix@")
+      ("exec_prefix"    . "@exec_prefix@")
+      ("guilemoduledir" . "@guilemoduledir@")
+      ("guileccachedir" . "@guileccachedir@")))
+
+  (define var-ref-regexp (make-regexp "\\$\\{([a-z_]+)\\}"))
+
+  (define (expand-var-ref match)
+    (config-lookup (match:substring match 1)))
+
+  (define (expand str)
+    (regexp-substitute/global #f var-ref-regexp str
+                              'pre expand-var-ref 'post))
+
+  (define (lookup name)
+    (expand (assoc-ref config name)))
+
+  (lookup variable))
+
+(unless (getenv "GUILE_DAEMON_UNINSTALLED")
+  (push! (config-lookup "guilemoduledir") %load-path)
+  (push! (config-lookup "guileccachedir") %load-compiled-path))
+
+(let ((main (module-ref (resolve-interface '(daemon))
+                        'main)))
+  (apply main (command-line)))
+
+;;; guile-daemon ends here
