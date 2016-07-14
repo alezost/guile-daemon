@@ -1,0 +1,49 @@
+;;; pre-inst-env.el --- Pre-installation environment for Guile-Daemon
+
+;; Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+
+;; This file is part of Guile-Daemon.
+
+;; Guile-Daemon is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; Guile-Daemon is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This file can be used to set up environment variables for
+;; Guile-Daemon inside Emacs.  This allows you to run "guile-daemon" in
+;; "M-x shell", or to use (daemon ...) modules in Geiser.  See the
+;; manual for details.
+
+;;; Code:
+
+(let ((src-modules   (expand-file-name "modules" "@abs_top_srcdir@"))
+      (build-modules (expand-file-name "modules" "@abs_top_builddir@"))
+      (guile-path    (getenv "GUILE_LOAD_PATH"))
+      (guile-cpath   (getenv "GUILE_LOAD_COMPILED_PATH")))
+  (setenv "GUILE_DAEMON_UNINSTALLED" "1")
+  (setenv "PATH"
+          (concat (expand-file-name "scripts" "@abs_top_builddir@")
+                  ":" (getenv "PATH")))
+  (setenv "GUILE_LOAD_PATH"
+          (let ((base (if guile-path
+                          (concat build-modules ":" guile-path)
+                        build-modules)))
+            (if (string= src-modules build-modules)
+                base
+              (concat src-modules ":" base))))
+  (setenv "GUILE_LOAD_COMPILED_PATH"
+          (if guile-cpath
+              (concat build-modules ":" guile-cpath)
+            build-modules)))
+
+;;; pre-inst-env.el ends here

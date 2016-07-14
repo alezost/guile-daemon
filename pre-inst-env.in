@@ -1,0 +1,54 @@
+#!/bin/sh
+
+# pre-inst-env --- Pre-installation environment for Guile-Daemon
+
+# Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+
+# This file is part of Guile-Daemon.
+
+# Guile-Daemon is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Guile-Daemon is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+usage () {
+    echo 'Usage: '"$0"' COMMAND ARG...
+Run COMMAND in a pre-installation environment.
+
+This script allows you to run "guile-daemon", or to use (daemon ...)
+modules in a Guile REPL.  See the manual for details.'
+}
+
+set_env () {
+    src_modules="@abs_top_srcdir@/modules"
+    build_modules="@abs_top_builddir@/modules"
+
+    GUILE_DAEMON_UNINSTALLED=1
+    export GUILE_DAEMON_UNINSTALLED
+
+    PATH="@abs_top_builddir@/scripts:$PATH"
+    export PATH
+
+    GUILE_LOAD_COMPILED_PATH="${build_modules}${GUILE_LOAD_COMPILED_PATH:+:}$GUILE_LOAD_COMPILED_PATH"
+    GUILE_LOAD_PATH="${src_modules}:${build_modules}${GUILE_LOAD_PATH:+:}$GUILE_LOAD_PATH"
+    export GUILE_LOAD_COMPILED_PATH GUILE_LOAD_PATH
+}
+
+case "$1" in
+    -h | --help)
+        usage
+        exit 0 ;;
+    *)
+        set_env
+        exec "$@" ;;
+esac
+
+# pre-inst-env ends here

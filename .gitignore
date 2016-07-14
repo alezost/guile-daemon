@@ -16,4 +16,6 @@ m4
 missing
 /build-aux
 /modules/daemon/config.scm
+/pre-inst-env
+/pre-inst-env.el
 /scripts/guile-daemon

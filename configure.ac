@@ -57,7 +57,9 @@ AC_SUBST([COPYRIGHT_YEAR])
 
 AC_CONFIG_FILES([Makefile
                  modules/Makefile
-                 modules/daemon/config.scm])
+                 modules/daemon/config.scm
+                 pre-inst-env.el])
+AC_CONFIG_FILES([pre-inst-env], [chmod +x pre-inst-env])
 AC_CONFIG_FILES([scripts/guile-daemon], [chmod +x scripts/guile-daemon])
 
 AC_OUTPUT
