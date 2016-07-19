@@ -1,0 +1,70 @@
+-*- mode: org -*-
+
+* About
+
+Guile-Daemon is a small Guile program that loads your initial
+configuration file, and then reads and evaluates Guile expressions that
+you send to a FIFO file.  That's basically it.
+
+Normally, =guile-daemon= will not exit: it's a daemon, so it just "sits"
+on a FIFO file waiting for commands.
+
+Along with =guile-daemon= program, Guile-Daemon provides =gdpipe= shell
+script that redirects commands to the default FIFO file.
+
+Finally, you can also connect to the daemon using a socket file (for
+example, with =M-x geiser-connect-local= if you use [[https://github.com/jaor/geiser][Geiser]]).
+
+By default, socket and FIFO files are placed in
+[[file:$XDG_CONFIG_HOME/guile-daemon/run]] directory
+([[file:$HOME/.config/guile-daemon/run]] if XDG_CONFIG_HOME is not set).
+
+* Usage
+
+Simply run =guile-daemon= (remember, it won't fork!), and then use
+=gdpipe= to evaluate anything, like this:
+
+#+BEGIN_SRC sh
+gdpipe '(format #t "load path: ~a~%" %load-path)'
+#+END_SRC
+
+(on a console where =guile-daemon= is running you should see the load
+path)
+
+I use Guile-Daemon as an OSD daemon, see [[https://github.com/alezost/guile-daemon-config][my config]].
+
+* Building from Git
+
+Requirements for building from git:
+
+- [[http://gnu.org/software/guile/][GNU Guile]]
+- [[http://gnu.org/software/autoconf/][GNU Autoconf]]
+- [[http://gnu.org/software/automake/][GNU Automake]]
+
+Run =./autogen.sh= to generate the build system infrastructure.  After
+that, the program can be built and installed with the usual sequence of
+commands of the GNU Build System:
+
+#+BEGIN_SRC sh
+$ ./configure
+$ make
+# make install
+#+END_SRC
+
+** Pre-installation environment
+
+It is possible to use/test Guile-Daemon without installing (i.e., after
+running =make= but before running =make install=) with the help of
+=pre-inst-env= script in the top build tree, like this:
+
+#+BEGIN_SRC sh
+$ ./pre-inst-env guile-daemon &
+$ ./pre-inst-env gdpipe ...
+#+END_SRC
+
+If you live in Emacs, you may find =pre-inst-env.el= more useful.  If
+you load this file (for example, with =M-x load-file=), it will set the
+required environment inside Emacs, so you can run =guile-daemon= and
+=gdpipe= in =M-x shell= without prefixing them with =.../pre-inst-env=.
+And more importantly, you can start Geiser and use (daemon ...) modules
+there!
