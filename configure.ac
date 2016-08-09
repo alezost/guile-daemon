@@ -29,9 +29,8 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 dnl ----------------------------------------------------------------
 dnl Checking for Guile
 
-PKG_CHECK_MODULES([GUILE], [guile-2.0 >= 2.0.2])
-GUILE_PKG
-GUILE_PROGS
+GUILE_PKG([2.2 2.0])
+GUILE_PROGS([2.0.2])
 
 AC_ARG_WITH([guile-site-dir],
   [AS_HELP_STRING([--with-guile-site-dir],
