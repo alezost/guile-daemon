@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-Daemon], [0.1], [alezost@gmail.com], [guile-daemon],
+AC_INIT([Guile-Daemon], [0.1.1], [alezost@gmail.com], [guile-daemon],
         [https://github.com/alezost/guile-daemon])
 
 AC_COPYRIGHT(GUILE_DAEMON_CONFIGURE_COPYRIGHT)
 
 AC_CONFIG_AUX_DIR([build-aux])
-
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 dnl ----------------------------------------------------------------
