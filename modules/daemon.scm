@@ -42,22 +42,22 @@
           (primitive-load file-name))
         (lambda (error . args)
           (print-error "Configuration file has not been loaded:")
-          (apply display-error #f (current-error-port) args)))
+          (apply report-error error args)))
       (print-error "Configuration file does not exist: ~a" file-name)))
 
 (define (load-fifo-file file-name)
   (catch #t
     (lambda ()
       (primitive-load file-name))
-    (lambda args
-      (match args
-        (('system-error args ...)
+    (lambda (error . args)
+      (match error
+        ('system-error
          (print-error "Something wrong with the FIFO file:")
-         (apply display-error #f (current-error-port) args)
+         (apply report-error error args)
          (exit 1))
-        ((error args ...)
+        (_
          (print-error "The code from the FIFO file has not been loaded:")
-         (apply display-error #f (current-error-port) args))))))
+         (apply report-error error args))))))
 
 (define (read-eval-loop file-name)
   "Read and evaluate Guile code from FIFO FILE-NAME in a loop."
@@ -85,7 +85,7 @@ the right permissions."
         (mknod file-name 'fifo %fifo-permissions 0))
       (lambda (error . args)
         (print-error "Couldn't create FIFO file ~a:" file-name)
-        (apply display-error #f (current-error-port) args)
+        (apply report-error error args)
         (exit 1)))))
 
 (define (start-server file-name)
@@ -98,7 +98,7 @@ the right permissions."
     (lambda (error . args)
       (print-error "Couldn't start server over socket file ~a:"
                    file-name)
-      (apply display-error #f (current-error-port) args))))
+      (apply report-error error args))))
 
 
 ;;; Main

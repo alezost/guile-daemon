@@ -28,6 +28,7 @@
   #:use-module (srfi srfi-1)
   #:export (alist-replace
             delete-file-maybe
+            report-error
             mkdir-with-parents
             ensure-directory
             print-output
@@ -44,6 +45,13 @@
   (begin
     (format (current-error-port) format-string args ...)
     (newline)))
+
+(define (report-error error . args)
+  "Call 'display-error' if ARGS are specified.
+Otherwise, display ERROR key."
+  (if (null? args)
+      (print-error "ERROR: ~a" error)
+      (apply display-error #f (current-error-port) args)))
 
 (define* (alist-replace key value alist #:optional (key-eq? eq?))
   "Remove KEY elements from alist and add KEY/VALUE pair instead."
