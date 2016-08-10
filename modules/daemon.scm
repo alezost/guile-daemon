@@ -103,7 +103,13 @@ the right permissions."
 
 ;;; Main
 
+(define (set-locale)
+  (catch #t
+    (lambda _ (setlocale LC_ALL ""))
+    report-error))
+
 (define (main name . args)
+  (set-locale)
   (let* ((opts   (parse-args args))
          (config (assoc-ref opts 'config-file))
          (fifo   (assoc-ref opts 'fifo-file))
