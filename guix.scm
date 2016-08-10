@@ -29,6 +29,14 @@
 ;;
 ;; (this will build/install the development package).
 
+;; Also you can use this file to make a development environment for
+;; building Guile-Daemon:
+;;
+;;   guix environment --pure --load=guix.scm
+;;   ./autogen.sh
+;;   ./configure
+;;   make
+
 ;;; Code:
 
 (use-modules
