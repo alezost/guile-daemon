@@ -51,6 +51,8 @@
       (primitive-load file-name))
     (lambda (error . args)
       (match error
+        ('quit  ; (exit) or (quit) is written to the FIFO file
+         (exit))
         ('system-error
          (print-error "Something wrong with the FIFO file:")
          (apply report-error error args)
