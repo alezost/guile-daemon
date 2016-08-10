@@ -91,8 +91,7 @@ the right permissions."
   "Create socket file at FILE-NAME and spawn REPL server there."
   (catch #t
     (lambda ()
-      (when (file-exists? file-name)
-        (delete-file file-name))
+      (delete-file-maybe file-name)
       (ensure-directory (dirname file-name))
       (spawn-server (make-unix-domain-server-socket #:path file-name)))
     (lambda (error . args)

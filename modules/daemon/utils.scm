@@ -27,6 +27,7 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:export (alist-replace
+            delete-file-maybe
             mkdir-with-parents
             ensure-directory
             print-output
@@ -67,5 +68,10 @@
   "Create DIRECTORY if it does not exist."
   (unless (file-exists? directory)
     (mkdir-with-parents directory)))
+
+(define (delete-file-maybe file-name)
+  "Delete file with FILE-NAME if it exists."
+  (when (file-exists? file-name)
+    (delete-file file-name)))
 
 ;;; utils.scm ends here
