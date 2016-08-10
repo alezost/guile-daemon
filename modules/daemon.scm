@@ -80,6 +80,7 @@ the right permissions."
   (unless (suitable-fifo-file? file-name)
     (catch #t
       (lambda ()
+        (delete-file-maybe file-name)
         (ensure-directory (dirname file-name))
         (mknod file-name 'fifo %fifo-permissions 0))
       (lambda (error . args)

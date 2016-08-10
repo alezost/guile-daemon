@@ -3,3 +3,8 @@
 * Changes in 0.1.1 (since 0.1)
 
 ** Support for Guile 2.2 added
+
+** Remove unsuitable FIFO file on start-up
+
+Previously when FIFO file existed, but was unsuitable (wrong
+permissions, etc.), guile-daemon failed to start.
