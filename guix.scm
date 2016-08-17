@@ -20,14 +20,14 @@
 ;;; Commentary:
 
 ;; This file contains 2 Guix packages for Guile-Daemon: for the latest
-;; release and for the latest (more or less) development snapshot (i.e.,
-;; for one of the latest commits of the guile-daemon git repository).
-;; To build (install), run:
+;; release and for the development snapshot (i.e., for the current
+;; commit of the git checkout).  To build or install, run:
 ;;
 ;;   guix build --file=guix.scm
 ;;   guix package --install-from-file=guix.scm
 ;;
-;; (this will build/install the development package).
+;; (this will build/install the development package using the current
+;; git checkout directory).
 
 ;; Also you can use this file to make a development environment for
 ;; building Guile-Daemon:
@@ -40,14 +40,26 @@
 ;;; Code:
 
 (use-modules
+ (ice-9 match)
+ (ice-9 popen)
+ (ice-9 rdelim)
+ (srfi srfi-1)
+ (srfi srfi-26)
+ (guix gexp)
  (guix packages)
  (guix download)
  (guix git-download)
  (guix licenses)
+ (guix build utils)
  (guix build-system gnu)
  (gnu packages autotools)
  (gnu packages guile)
  (gnu packages pkg-config))
+
+(define %source-dir (dirname (current-filename)))
+
+
+;;; Package for the latest release
 
 (define guile-daemon
   (package
@@ -74,26 +86,44 @@ configuration file, and then reads and evaluates Guile expressions that
 you send to a FIFO file.")
     (license gpl3+)))
 
+
+;;; Git checkout and development package
+
+(define (git-output . args)
+  "Execute 'git ARGS ...' command and return its output without trailing
+newspace."
+  (with-directory-excursion %source-dir
+    (let* ((port   (apply open-pipe* OPEN_READ "git" args))
+           (output (read-string port)))
+      (close-port port)
+      (string-trim-right output #\newline))))
+
+(define (git-files)
+  "Return a list of all git-controlled files."
+  (string-split (git-output "ls-files") #\newline))
+
+(define git-file?
+  (let ((files (git-files)))
+    (lambda (file stat)
+      "Return #t if FILE is the git-controlled file in '%source-dir'."
+      (match (stat:type stat)
+        ('directory #t)
+        ((or 'regular 'symlink)
+         (any (cut string-suffix? <> file) files))
+        (_ #f)))))
+
+(define (current-commit)
+  (git-output "log" "-n" "1" "--pretty=format:%H"))
+
 (define guile-daemon-devel
-  (let ((revision "1")
-        (commit "e519f4448ee604af24d2a4c4c4ba207a5d2296ba"))
+  (let ((commit (current-commit)))
     (package
       (inherit guile-daemon)
       (version (string-append (package-version guile-daemon)
-                              "-" revision "."
-                              (string-take commit 7)))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url (string-append "git://github.com/alezost/"
-                                          (package-name guile-daemon)
-                                          ".git"))
-                      (commit commit)))
-                (file-name (string-append (package-name guile-daemon)
-                                          "-" version "-checkout"))
-                (sha256
-                 (base32
-                  "0aa333280s3gqdnr8xxnq9jsqbhxmq46ws9bj32vlx21b5v5ljcp"))))
+                              "-" (string-take commit 7)))
+      (source (local-file %source-dir
+                          #:recursive? #t
+                          #:select? git-file?))
       (arguments
        '(#:phases
          (modify-phases %standard-phases
