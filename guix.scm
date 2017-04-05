@@ -36,26 +36,17 @@
 ;;; Code:
 
 (use-modules
- (ice-9 match)
  (ice-9 popen)
  (ice-9 rdelim)
- (srfi srfi-1)
- (srfi srfi-26)
  (guix gexp)
  (guix packages)
- (guix download)
  (guix git-download)
- (guix licenses)
  (guix build utils)
- (guix build-system gnu)
  (gnu packages autotools)
  (gnu packages guile)
  (gnu packages pkg-config))
 
 (define %source-dir (dirname (current-filename)))
-
-
-;;; Git checkout and development package
 
 (define (git-output . args)
   "Execute 'git ARGS ...' command and return its output without trailing
@@ -65,20 +56,6 @@ newspace."
            (output (read-string port)))
       (close-port port)
       (string-trim-right output #\newline))))
-
-(define (git-files)
-  "Return a list of all git-controlled files."
-  (string-split (git-output "ls-files") #\newline))
-
-(define git-file?
-  (let ((files (git-files)))
-    (lambda (file stat)
-      "Return #t if FILE is the git-controlled file in '%source-dir'."
-      (match (stat:type stat)
-        ('directory #t)
-        ((or 'regular 'symlink)
-         (any (cut string-suffix? <> file) files))
-        (_ #f)))))
 
 (define (current-commit)
   (git-output "log" "-n" "1" "--pretty=format:%H"))
@@ -91,7 +68,7 @@ newspace."
                               "-" (string-take commit 7)))
       (source (local-file %source-dir
                           #:recursive? #t
-                          #:select? git-file?))
+                          #:select? (git-predicate %source-dir)))
       (arguments
        '(#:phases
          (modify-phases %standard-phases
