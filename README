@@ -72,9 +72,9 @@ there!
 * Building/installing with Guix
 
 The latest version of Guile-Daemon can be installed with [[http://www.gnu.org/software/guix/][GNU Guix]]:
-https://www.gnu.org/software/guix/packages/#guile-daemon.
+[[https://www.gnu.org/software/guix/packages/g.html#guile-daemon]].
 
 Also this repository contains [[file:guix.scm]] file which can be used to
-build/install Guile-XOSD using the git checkout, or to make a
+build/install Guile-Daemon using the git checkout, or to make a
 development environment for it (see the commentary in that file for more
 details).
