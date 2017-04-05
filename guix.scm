@@ -1,6 +1,6 @@
 ;;; guix.scm --- Guix package for Guile-Daemon
 
-;; Copyright © 2016 Alex Kost <alezost@gmail.com>
+;; Copyright © 2016–2017 Alex Kost <alezost@gmail.com>
 
 ;; This file is part of Guile-Daemon.
 
@@ -19,18 +19,14 @@
 
 ;;; Commentary:
 
-;; This file contains 2 Guix packages for Guile-Daemon: for the latest
-;; release and for the development snapshot (i.e., for the current
-;; commit of the git checkout).  To build or install, run:
+;; This file contains Guix package for development version of
+;; Guile-Daemon.  To build or install, run:
 ;;
 ;;   guix build --file=guix.scm
 ;;   guix package --install-from-file=guix.scm
-;;
-;; (this will build/install the development package using the current
-;; git checkout directory).
 
-;; Also you can use this file to make a development environment for
-;; building Guile-Daemon:
+;; The main purpose of this file though is to make a development
+;; environment for building Guile-Daemon:
 ;;
 ;;   guix environment --pure --load=guix.scm
 ;;   ./autogen.sh
@@ -57,34 +53,6 @@
  (gnu packages pkg-config))
 
 (define %source-dir (dirname (current-filename)))
-
-
-;;; Package for the latest release
-
-(define guile-daemon
-  (package
-    (name "guile-daemon")
-    (version "0.1.1")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append "https://github.com/alezost/" name
-                                  "/releases/download/v" version
-                                  "/" name "-" version ".tar.gz"))
-              (sha256
-               (base32
-                "0wsq9l6a4sijq4i1r3kcddfaznsak2jc5k59gzkhs5il5d2kn5yi"))))
-    (build-system gnu-build-system)
-    (native-inputs
-     `(("pkg-config" ,pkg-config)))
-    (inputs
-     `(("guile" ,guile-2.0)))
-    (home-page "https://github.com/alezost/guile-daemon")
-    (synopsis "Evaluate code in a running Guile process")
-    (description
-     "Guile-Daemon is a small Guile program that loads your initial
-configuration file, and then reads and evaluates Guile expressions that
-you send to a FIFO file.")
-    (license gpl3+)))
 
 
 ;;; Git checkout and development package
