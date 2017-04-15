@@ -1,6 +1,6 @@
 # Makefile.am --- GNU Automake file to build guile modules
 
-# Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+# Copyright © 2016–2017 Alex Kost <alezost@gmail.com>
 
 # This file is part of Guile-Daemon.
 
@@ -16,6 +16,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
+
+AM_V_GUILEC = $(AM_V_GUILEC_$(V))
+AM_V_GUILEC_ = $(AM_V_GUILEC_$(AM_DEFAULT_VERBOSITY))
+AM_V_GUILEC_0 = @echo "  GUILEC     " $@;
 
 MODULES =					\
   daemon/defaults.scm				\
@@ -54,7 +58,8 @@ GUILEC_OPTS =					\
   -Wunused-variable
 
 $(GO_FILES): %.go: %.scm
-	$(GUILEC_ENV) $(GUILD) compile $(GUILEC_OPTS) --output=$@ $<
+	-$(AM_V_GUILEC) $(GUILEC_ENV) \
+	$(GUILD) compile $(GUILEC_OPTS) --output=$@ $<
 
 CLEANFILES = $(GO_FILES)
 

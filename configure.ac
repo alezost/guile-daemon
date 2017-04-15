@@ -1,5 +1,5 @@
 define(GUILE_DAEMON_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+Copyright (C) 2016-2017 Alex Kost <alezost@gmail.com>
 
 This file is part of Guile-Daemon.
 
@@ -24,6 +24,7 @@ AC_COPYRIGHT(GUILE_DAEMON_CONFIGURE_COPYRIGHT)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_SILENT_RULES([yes])
 
 dnl ----------------------------------------------------------------
 dnl Checking for Guile
