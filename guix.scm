@@ -44,7 +44,8 @@
  (guix build utils)
  (gnu packages autotools)
  (gnu packages guile)
- (gnu packages pkg-config))
+ (gnu packages pkg-config)
+ (gnu packages texinfo))
 
 (define %source-dir (dirname (current-filename)))
 
@@ -77,7 +78,8 @@ newspace."
       (native-inputs
        (append (package-native-inputs guile-daemon)
                `(("autoconf" ,autoconf)
-                 ("automake" ,automake)))))))
+                 ("automake" ,automake)
+                 ("texinfo" ,texinfo)))))))
 
 guile-daemon-devel
 

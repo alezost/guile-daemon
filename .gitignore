@@ -1,7 +1,9 @@
 *.go
+*.info
 *.log
 *.tar.gz
 *~
+.dirstamp
 tmp
 Makefile
 Makefile.in
@@ -14,7 +16,10 @@ configure
 install-sh
 m4
 missing
+texinfo.tex
 /build-aux
+/doc/stamp-vti
+/doc/version.texi
 /modules/daemon/config.scm
 /pre-inst-env
 /pre-inst-env.el

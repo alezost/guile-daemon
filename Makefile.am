@@ -1,6 +1,6 @@
 # Makefile.am --- GNU Automake file to build Guile-Daemon
 
-# Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+# Copyright © 2016–2017 Alex Kost <alezost@gmail.com>
 
 # This file is part of Guile-Daemon.
 
@@ -20,6 +20,8 @@
 SUBDIRS = modules
 
 EXTRA_DIST = scripts/gdpipe
+
+info_TEXINFOS = doc/guile-daemon.texi
 
 bin_SCRIPTS =					\
   scripts/guile-daemon				\

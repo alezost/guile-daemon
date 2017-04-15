@@ -1,0 +1,280 @@
+\input texinfo
+
+@setfilename guile-daemon.info
+@documentencoding UTF-8
+@settitle Guile-Daemon Reference Manual
+
+@include version.texi
+
+@copying
+This document describes Guile-Daemon version @value{VERSION}, a
+program used to execute an arbitrary Guile code that it receives from
+a FIFO file.
+
+@quotation
+Copyright @copyright{} 2017 Alex Kost
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is available at
+@url{http://www.gnu.org/licenses/fdl.html}.
+
+@end quotation
+@end copying
+
+@dircategory The Algorithmic Language Scheme
+@direntry
+* Guile-Daemon: (guile-daemon).     Daemon for executing user Guile code.
+@end direntry
+
+@titlepage
+@title Guile-Daemon Reference Manual
+@subtitle for Guile-Daemon @value{VERSION}
+@author Alex Kost
+
+@page
+@vskip 0pt plus 1filll
+
+@insertcopying
+@end titlepage
+
+@contents
+
+@c ----------------------------------------------------------------
+@node Top
+@top Guile-Daemon
+
+@insertcopying
+
+@menu
+* Introduction::          Quick overview.
+* Installation::          Installing Guile-Daemon.
+* Command-line Options::  Command-line options for @code{guile-daemon}.
+* The REPL::              Interacting with the Guile-Daemon REPL.
+* Hacking::               How to modify Guile-Daemon code.
+
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+Guile-Daemon is a small Guile program (called @code{guile-daemon})
+that loads your initial configuration file, and then reads and
+evaluates Guile expressions that you send to a FIFO file.  That's
+basically it.
+
+You can send Guile expressions to the daemon either manually directing
+them to the FIFO file, or using a simple shell script (called
+@code{gdpipe}).
+
+Finally, you can also connect to the daemon using a socket file
+(@pxref{The REPL}).
+
+@node Installation
+@chapter Installation
+
+@cindex installation
+There are several ways to install Guile-Daemon:
+
+@itemize
+@item
+Installing using @uref{http://gnu.org/software/guix/, GNU Guix}
+@example
+$ guix package -i guile-daemon
+@end example
+
+@item
+Installing manually (@code{make install}).
+
+@item
+Using from a git checkout.
+@end itemize
+
+If you installed Guile-Daemon with Guix or another package manager,
+you can skip this chapter.  For the rest options, read further.
+
+@menu
+* Requirements::          Required dependencies.
+* Manual Installation::   @code{./configure && make && make install}.
+* Using from Git::        Using without installation.
+@end menu
+
+@node Requirements
+@section Requirements
+
+Guile-Daemon depends only on @uref{http://gnu.org/software/guile/, GNU
+Guile}, version 2.0.2 or later.
+
+However, if you want to build it manually from a release tarball, make
+sure you have a usual toolset for the GNU Build System (in particular,
+@code{make} and @code{pkg-config}).
+
+And if you want to build it from a git checkout, you also need
+autotools (@code{autoconf} and @code{automake}) and @code{texinfo} to
+build the manual.
+
+@node Manual Installation
+@section Manual Installation
+
+If you want to install Guile-Daemon manually, at first, you need to
+get a release tarball.  It can be found at
+@uref{https://github.com/alezost/guile-daemon/releases}.
+
+Now you can build it with the usual sequence of commands of the GNU
+Build System:
+@example
+$ ./configure
+$ make
+# make install
+@end example
+
+For more details on the installation process, see @file{INSTALL} file.
+
+@strong{Important:} Guile modules are installed under the configured
+@code{prefix}.  A typical module directory will be
+@file{/usr/local/share/guile/site/2.2/}).  However, Guile does not
+search for modules in @file{/usr/local/...}, so most likely you would
+want to configure the package using @code{--with-guile-site-dir} and
+@code{--with-guile-site-ccache-dir} options, like this:
+
+@example
+$ ./configure --with-guile-site-dir=/usr/share/guile/site/2.2 \
+              --with-guile-site-ccache-dir=/usr/lib/guile/2.2/site-ccache
+@end example
+
+These are the default directories where @file{*.scm} and @file{*.go}
+files should go if Guile was installed into @code{/usr}.  Of course,
+you can specify any other directories, but make sure to add them to
+@code{GUILE_LOAD_PATH} and @code{GUILE_LOAD_COMPILED_PATH} accordingly
+(@pxref{Environment Variables,,, guile, The GNU Guile Reference
+Manual}).
+
+Alternatively, you can just install Guile-Daemon using the same prefix
+as was specified for Guile:
+
+@example
+$ ./configure --prefix=/usr
+@end example
+
+@node Using from Git
+@section Using from Git
+
+It is possible to use Guile-Daemon directly from a git checkout,
+without installation.  At first, clone the repository and build it:
+
+@example
+$ git clone https://github.com/alezost/guile-daemon.git
+$ cd guile-daemon
+@end example
+
+Now make sure you have all the required dependencies
+(@pxref{Requirements}).  If you use Guix, you may use @file{guix.scm}
+file to make the needed environment (@pxref{Invoking guix
+environment,,, guix, The GNU Guix Reference Manual}):
+
+@example
+$ guix environment --pure --load=guix.scm
+@end example
+
+Finally, run @code{autogen.sh} script (it's just a wrapper for
+@code{autoreconf} command) and build Guile-Daemon:
+
+@example
+$ ./autogen.sh
+$ ./configure
+$ make
+@end example
+
+Now you can run @code{guile-daemon} using a generated
+@file{pre-inst-env} shell script@footnote{@xref{Hacking}, for details
+about @file{pre-inst-env} script.}:
+
+@example
+$ ./pre-inst-env guile-daemon
+@end example
+
+And send Guile expressions to it with @file{gdpipe}:
+
+@example
+$ scripts/gdpipe '(with-output-to-file "/tmp/hello" (lambda () (display "Hello!")))'
+@end example
+
+@node Command-line Options
+@chapter Command-line Options
+
+You can run Guile-Daemon with the following command-line arguments:
+
+@table @code
+@item -h
+@itemx --help
+Display a short help message and exit.
+
+@item -V
+@itemx --version
+Display version and exit.
+
+@item -c @var{file}
+@itemx --config=@var{file}
+Load startup configuration from @var{file} instead of the default
+@file{$XDG_CONFIG_HOME/guile-daemon/init.scm}.@footnote{If
+@code{XDG_CONFIG_HOME} environment variable is not set,
+@file{$HOME/.config} directory is used.}
+
+@item -f @var{file}
+@itemx --fifo=@var{file}
+Use FIFO @var{file} instead of the default
+@file{$XDG_CONFIG_HOME/guile-daemon/run/fifo}.
+
+@item -s @var{file}
+@itemx --socket=@var{file}
+Use socket @var{file} instead of the default
+@file{$XDG_CONFIG_HOME/guile-daemon/run/socket}.
+@end table
+
+@node The REPL
+@chapter The REPL
+As mentioned in the Introduction (@pxref{Introduction}), you can
+connect to the running guile-daemon process using a socket file, thus
+you can have a direct access to it via the Guile REPL (@pxref{The
+REPL,,, guile, The GNU Guile Reference Manual}).
+
+By default, the socket file name is
+@file{$XDG_CONFIG_HOME/guile-daemon/run/socket}.  You can change it
+with @code{--socket} option (@pxref{Command-line Options}).
+
+If you use @uref{http://gnu.org/software/emacs/, GNU Emacs} and
+@uref{https://github.com/jaor/geiser, Geiser}, the best way to connect
+to the socket file is @kbd{M-x geiser-connect-local} command.
+
+@node Hacking
+@chapter Hacking
+
+If you use Guile-Daemon from a git checkout (@pxref{Using from Git}),
+you may be interested in modifying it, or you may just wonder what
+@file{pre-inst-env} script does.  This chapter describes some details
+on this subject.
+
+After building a git checkout, you can't simply execute
+@file{scripts/guile-daemon} because it needs some Guile modules from
+the checkout.  This is why @file{pre-inst-env} is needed.  Basically
+it just sets @code{GUILE_LOAD_PATH} and
+@code{GUILE_LOAD_COMPILED_PATH} variables (@pxref{Environment
+Variables,,, guile, The GNU Guile Reference Manual}) and runs the
+specified command, so it may be used like this:
+
+@example
+$ ./pre-inst-env guile
+scheme@@(guile-user)> ,use(daemon defaults)
+scheme@@(guile-user)> %default-fifo-file
+$1 = "/home/user/.config/guile-daemon/run/fifo"
+@end example
+
+If you live in Emacs, you may find @file{pre-inst-env.el} more useful.
+If you load this file (for example, with @kbd{M-x load-file}), it will
+set the environment inside Emacs, so you can run Guile in @kbd{M-x
+shell}, or more importantly start Geiser and use Guile-Daemon modules
+there.
+
+@bye
