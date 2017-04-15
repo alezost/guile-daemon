@@ -1,5 +1,9 @@
 -*- mode: org -*-
 
+* Changes in 0.1.2 (since 0.1.1)
+
+** Texinfo manual added
+
 * Changes in 0.1.1 (since 0.1)
 
 ** Support for Guile 2.2 added
