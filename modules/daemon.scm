@@ -1,6 +1,6 @@
 ;;; daemon.scm --- Main module for Guile-Daemon
 
-;; Copyright © 2016 Alex Kost <alezost@gmail.com>
+;; Copyright © 2016, 2018 Alex Kost <alezost@gmail.com>
 
 ;; This file is part of Guile-Daemon.
 
@@ -116,9 +116,9 @@ the right permissions."
          (config (assoc-ref opts 'config-file))
          (fifo   (assoc-ref opts 'fifo-file))
          (socket (assoc-ref opts 'socket-file)))
-    (load-config-file config)
     (start-server socket)
     (make-fifo-file-maybe fifo)
+    (load-config-file config)
     (read-eval-loop fifo)))
 
 ;;; daemon.scm ends here
