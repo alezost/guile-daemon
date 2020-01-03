@@ -43,7 +43,7 @@
  (guix git-download)
  (guix build utils)
  (gnu packages autotools)
- (gnu packages guile)
+ (gnu packages guile-xyz)
  (gnu packages pkg-config)
  (gnu packages texinfo))
 
