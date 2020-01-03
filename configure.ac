@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-Daemon], [0.1.2], [alezost@gmail.com], [guile-daemon],
+AC_INIT([Guile-Daemon], [0.1.3], [alezost@gmail.com], [guile-daemon],
         [https://github.com/alezost/guile-daemon])
 
 AC_COPYRIGHT(GUILE_DAEMON_CONFIGURE_COPYRIGHT)
