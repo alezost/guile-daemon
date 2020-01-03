@@ -2,7 +2,7 @@
 
 # gdpipe --- Write text to the default FIFO file of Guile-Daemon
 
-# Copyright (C) 2016 Alex Kost <alezost@gmail.com>
+# Copyright (C) 2016, 2020 Alex Kost <alezost@gmail.com>
 
 # This file is part of Guile-Daemon.
 
@@ -19,21 +19,33 @@
 # You should have received a copy of the GNU General Public License
 # along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
 
-if [ -z "$XDG_CONFIG_HOME" ]; then
-    CONF_DIR="$HOME/.config"
+set_fifo_file_if_exists () {
+    [ -p "$1" ] && FIFO_FILE="$1"
+}
+
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+    if [ -z "$XDG_CONFIG_HOME" ]; then
+        CONF_DIR="$HOME/.config"
+    else
+        CONF_DIR="$XDG_CONFIG_HOME"
+    fi
+    set_fifo_file_if_exists "$CONF_DIR/guile-daemon/run/fifo"
 else
-    CONF_DIR="$XDG_CONFIG_HOME"
+    set_fifo_file_if_exists "$XDG_RUNTIME_DIR/guile-daemon/fifo"
 fi
 
-FIFO_FILE="$CONF_DIR/guile-daemon/run/fifo"
-
-case "$1" in
-    -h | --help)
-        echo "Usage: gdpipe COMMANDS ...
-Redirect COMMANDS to '$FIFO_FILE'."
-        exit 0 ;;
-    *)
+if [ -v FIFO_FILE ]; then
+    case "$1" in
+        -h | --help)
+            echo "Usage: gdpipe COMMANDS ...
+Redirect COMMANDS to '$FIFO_FILE'.
+See (info \"(guile-daemon) Top\") for details."
+            exit 0 ;;
+        *)
         echo "$@" >> "$FIFO_FILE" ;;
-esac
+    esac
+else
+    echo "Couldn't find fifo file!"
+fi
 
 # gdpipe ends here

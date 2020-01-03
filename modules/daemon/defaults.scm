@@ -1,6 +1,6 @@
 ;;; defaults.scm --- Default file names for Guile-Daemon
 
-;; Copyright © 2016 Alex Kost <alezost@gmail.com>
+;; Copyright © 2016, 2018, 2020 Alex Kost <alezost@gmail.com>
 
 ;; This file is part of Guile-Daemon.
 
@@ -41,8 +41,9 @@
 
 (define %default-socket-directory
   ;; File name of the default directory for FIFO and socket files.
-  ;; XXX Is there a better place?
-  (string-append %default-config-directory "/run"))
+  (or (and=> (getenv "XDG_RUNTIME_DIR")
+             (cut string-append <> "/guile-daemon"))
+      (string-append %default-config-directory "/run")))
 
 (define %default-config-file
   ;; File name of the default user configuration.
