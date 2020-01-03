@@ -1,5 +1,5 @@
 define(GUILE_DAEMON_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2016-2017 Alex Kost <alezost@gmail.com>
+Copyright (C) 2016-2020 Alex Kost <alezost@gmail.com>
 
 This file is part of Guile-Daemon.
 
@@ -29,7 +29,7 @@ AM_SILENT_RULES([yes])
 dnl ----------------------------------------------------------------
 dnl Checking for Guile
 
-GUILE_PKG([2.2 2.0])
+GUILE_PKG([3.0 2.2 2.0])
 GUILE_PROGS([2.0.2])
 
 AC_ARG_WITH([guile-site-dir],
