@@ -1,6 +1,6 @@
 ;;; daemon.scm --- Main module for Guile-Daemon
 
-;; Copyright © 2016, 2018 Alex Kost <alezost@gmail.com>
+;; Copyright © 2016–2026 Alex Kost <alezost@gmail.com>
 
 ;; This file is part of Guile-Daemon.
 
@@ -24,6 +24,7 @@
 ;;; Code:
 
 (define-module (daemon)
+  #:use-module (ice-9 ports)
   #:use-module (ice-9 match)
   #:use-module (system repl server)
   #:use-module (daemon ui)
@@ -46,20 +47,29 @@
       (print-error "Configuration file does not exist: ~a" file-name)))
 
 (define (load-fifo-file file-name)
+  "Evaluate FILE-NAME contents.
+Also write the result of evaluation back to FILE-NAME."
+  (define (output expr)
+    (with-output-to-file file-name
+      (lambda () (write expr))))
+
   (catch #t
     (lambda ()
-      (primitive-load file-name))
+      (output (primitive-load file-name)))
     (lambda (error . args)
       (match error
         ('quit  ; (exit) or (quit) is written to the FIFO file
+         (output "guile-daemon is quitting")
          (exit))
         ('system-error
          (print-error "Something wrong with the FIFO file:")
          (apply report-error error args)
+         (output "guile-daemon is quitting, look at its log")
          (exit 1))
         (_
-         (print-error "The code from the FIFO file has not been loaded:")
-         (apply report-error error args))))))
+         (print-error "Failed to load code from the FIFO file:")
+         (apply report-error error args)
+         (output "evaluation error, look at guile-daemon log"))))))
 
 (define (read-eval-loop file-name)
   "Read and evaluate Guile code from FIFO FILE-NAME in a loop."

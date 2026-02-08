@@ -12,7 +12,7 @@ program used to execute an arbitrary Guile code that it receives from
 a FIFO file.
 
 @quotation
-Copyright @copyright{} 2017, 2020 Alex Kost
+Copyright @copyright{} 2017, 2020, 2026 Alex Kost
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3
@@ -65,9 +65,9 @@ that loads your initial configuration file, and then reads and
 evaluates Guile expressions that you send to a FIFO file.  That's
 basically it.
 
-You can send Guile expressions to the daemon either manually directing
-them to the FIFO file, or using a simple shell script (called
-@code{gdpipe}).
+You can send Guile expressions to the daemon using a simple shell
+script (called @code{gdpipe}).  It redirects expressions to the FIFO
+file and prints the result of evaluation to standard output.
 
 Finally, you can also connect to the daemon using a socket file
 (@pxref{The REPL}).
@@ -80,7 +80,7 @@ There are several ways to install Guile-Daemon:
 
 @itemize
 @item
-Installing using @uref{http://gnu.org/software/guix/, GNU Guix}
+Installing using @uref{https://guix.gnu.org/, GNU Guix}
 @example
 $ guix package -i guile-daemon
 @end example
@@ -104,8 +104,9 @@ you can skip this chapter.  For the rest options, read further.
 @node Requirements
 @section Requirements
 
-Guile-Daemon depends only on @uref{http://gnu.org/software/guile/, GNU
-Guile}, version 2.0.2 or later.
+Guile-Daemon depends only on
+@uref{https://www.gnu.org/software/guile/, GNU Guile}, version 2.0.2
+or later.
 
 However, if you want to build it manually from a release tarball, make
 sure you have a usual toolset for the GNU Build System (in particular,
@@ -244,7 +245,7 @@ By default, the socket file name is
 @file{$XDG_RUNTIME_DIR/guile-daemon/socket}.  You can change it
 with @code{--socket} option (@pxref{Command-line Options}).
 
-If you use @uref{http://gnu.org/software/emacs/, GNU Emacs} and
+If you use @uref{https://www.gnu.org/software/emacs/, GNU Emacs} and
 @uref{https://github.com/jaor/geiser, Geiser}, the best way to connect
 to the socket file is @kbd{M-x geiser-connect-local} command.
 

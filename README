@@ -10,7 +10,8 @@ Normally, =guile-daemon= will not exit: it's a daemon, so it just "sits"
 on a FIFO file waiting for commands.
 
 Along with =guile-daemon= program, Guile-Daemon provides =gdpipe= shell
-script that redirects commands to the default FIFO file.
+script that redirects commands to the default FIFO file and prints the
+result of evaluation to standard output.
 
 Finally, you can also connect to the daemon using a socket file (for
 example, with =M-x geiser-connect-local= if you use [[https://github.com/jaor/geiser][Geiser]]).
@@ -23,6 +24,12 @@ By default, socket and FIFO files are placed in
 
 Simply run =guile-daemon= (remember, it won't fork!), and then use
 =gdpipe= to evaluate anything, like this:
+
+#+BEGIN_SRC sh
+gdpipe '(+ 1 2 3)'
+#+END_SRC
+
+(=gdpipe= prints "6") or like this:
 
 #+BEGIN_SRC sh
 gdpipe '(format #t "load path: ~a~%" %load-path)'

@@ -2,7 +2,7 @@
 
 # gdpipe --- Write text to the default FIFO file of Guile-Daemon
 
-# Copyright (C) 2016, 2020 Alex Kost <alezost@gmail.com>
+# Copyright (C) 2016-2026 Alex Kost <alezost@gmail.com>
 
 # This file is part of Guile-Daemon.
 
@@ -38,11 +38,21 @@ if [ -v FIFO_FILE ]; then
     case "$1" in
         -h | --help)
             echo "Usage: gdpipe COMMANDS ...
+
 Redirect COMMANDS to '$FIFO_FILE'.
+Print the result from guile-daemon to standard output.
+
 See (info \"(guile-daemon) Top\") for details."
             exit 0 ;;
         *)
-        echo "$@" >> "$FIFO_FILE" ;;
+        if bash -c "echo '$@' > '$FIFO_FILE'"; then
+            read RESULT < "$FIFO_FILE"
+            echo "$RESULT"
+        else
+            echo "Failed to send commands. Make sure that Guile-Daemon is running" >&2
+            exit 1
+        fi
+        ;;
     esac
 else
     echo "Couldn't find fifo file!"
