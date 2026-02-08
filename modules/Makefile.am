@@ -54,8 +54,7 @@ GUILEC_ENV =						\
 GUILEC_OPTS =					\
   -Warity-mismatch				\
   -Wformat					\
-  -Wunbound-variable				\
-  -Wunused-variable
+  -Wunbound-variable
 
 $(GO_FILES): %.go: %.scm
 	-$(AM_V_GUILEC) $(GUILEC_ENV) \
