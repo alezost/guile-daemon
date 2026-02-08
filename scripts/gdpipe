@@ -19,6 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Guile-Daemon.  If not, see <http://www.gnu.org/licenses/>.
 
+# How many seconds we wait before giving up on sending commands (most
+# likely, this means that Guile-Daemon is not runnnig).
+TIMEOUT=1
+
 set_fifo_file_if_exists () {
     [ -p "$1" ] && FIFO_FILE="$1"
 }
@@ -45,7 +49,7 @@ Print the result from guile-daemon to standard output.
 See (info \"(guile-daemon) Top\") for details."
             exit 0 ;;
         *)
-        if bash -c "echo '$@' > '$FIFO_FILE'"; then
+        if timeout $TIMEOUT bash -c "echo '$@' > '$FIFO_FILE'"; then
             read RESULT < "$FIFO_FILE"
             echo "$RESULT"
         else
