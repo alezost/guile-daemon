@@ -1,5 +1,21 @@
 -*- mode: org -*-
 
+* Changes in 0.2 (since 0.1.3)
+
+** Daemon outputs returned value to FIFO file
+
+Previously, Guile Daemon only received commands from fifo file.  Now, it
+also outputs the result of evaluation back to the fifo file.  "gdpipe"
+shell script waits for the evaluation and prints the result to sdtout.
+
+Not sure if using a single fifo file in both direction is a good idea,
+though.  Both, guile-daemon and gdpipe, are reading and writing to the
+same fifo file (on their turns).  This works good so far.  However, if a
+user will send a code to the fifo file directly (without gdpipe) and
+will not read the output, then guile-daemon itself will read its own
+output and will try to evaluate it.  So using 2 different fifo files
+would probably be a better solution.
+
 * Changes in 0.1.3 (since 0.1.2)
 
 ** Default runtime directory is changed
@@ -7,6 +23,8 @@
 Previously, fifo and socket files were placed in
 "~/.config/guile-daemon/run".  Now the default directory is
 "$XDG_RUNTIME_DIR/guile-daemon".
+
+** Support for Guile 3.0 added
 
 * Changes in 0.1.2 (since 0.1.1)
 
