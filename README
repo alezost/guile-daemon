@@ -1,5 +1,8 @@
 -*- mode: org -*-
 
+[[https://www.gnu.org/licenses/gpl-3.0.txt][https://img.shields.io/badge/license-GPL_3-orange.svg]]
+[[https://packages.guix.gnu.org/packages/guile-daemon][https://packages.guix.gnu.org/packages/guile-daemon/badges/latest-version.svg]]
+
 * About
 
 Guile-Daemon is a small Guile program that loads your initial
@@ -75,13 +78,3 @@ required environment inside Emacs, so you can run =guile-daemon= and
 =gdpipe= in =M-x shell= without prefixing them with =.../pre-inst-env=.
 And more importantly, you can start Geiser and use (daemon ...) modules
 there!
-
-* Building/installing with Guix
-
-The latest version of Guile-Daemon can be installed with [[http://www.gnu.org/software/guix/][GNU Guix]]:
-[[https://www.gnu.org/software/guix/packages/g.html#guile-daemon]].
-
-Also this repository contains [[file:guix.scm]] file which can be used to
-build/install Guile-Daemon using the git checkout, or to make a
-development environment for it (see the commentary in that file for more
-details).

@@ -171,13 +171,7 @@ $ cd guile-daemon
 @end example
 
 Now make sure you have all the required dependencies
-(@pxref{Requirements}).  If you use Guix, you may use @file{guix.scm}
-file to make the needed environment (@pxref{Invoking guix
-environment,,, guix, The GNU Guix Reference Manual}):
-
-@example
-$ guix environment --pure --load=guix.scm
-@end example
+(@pxref{Requirements}).
 
 Finally, run @code{autogen.sh} script (it's just a wrapper for
 @code{autoreconf} command) and build Guile-Daemon:
