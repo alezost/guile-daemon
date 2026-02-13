@@ -38,18 +38,18 @@ else
     set_fifo_file_if_exists "$XDG_RUNTIME_DIR/guile-daemon/fifo"
 fi
 
-if [ -v FIFO_FILE ]; then
+if [ -n "$FIFO_FILE" ]; then
     case "$1" in
         -h | --help)
-            echo "Usage: gdpipe COMMANDS ...
+            echo "Usage: gdpipe EXPRESSIONS ...
 
-Redirect COMMANDS to '$FIFO_FILE'.
-Print the result from guile-daemon to standard output.
+Redirect Guile EXPRESSIONS to '$FIFO_FILE'.
+Print the result of their evaluation to standard output.
 
 See (info \"(guile-daemon) Top\") for details."
             exit 0 ;;
         *)
-        if timeout $TIMEOUT bash -c "echo '$@' > '$FIFO_FILE'"; then
+        if timeout $TIMEOUT sh -c 'echo "$*" > "$0"' "$FIFO_FILE" "$*"; then
             read RESULT < "$FIFO_FILE"
             echo "$RESULT"
         else
